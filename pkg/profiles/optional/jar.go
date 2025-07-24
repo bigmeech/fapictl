@@ -9,7 +9,7 @@ import (
 
 	httpClient "fapictl/pkg/http"
 	"fapictl/pkg/verifier"
-	"github.com/golang-jwt/jwt/v5"
+	jwt "github.com/golang-jwt/jwt/v5"
 )
 
 type JARVerifier struct {

@@ -4,7 +4,7 @@
 
 **fapictl** is a command-line tool written in Go for testing and validating the compliance of OAuth 2.0 and OpenID Connect servers with the Financial-grade API (FAPI) security profiles. It helps security engineers, developers, and auditors ensure their systems conform to FAPI Read-Only (R/O), FAPI Read/Write (R/W), and related open banking profiles.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Interactive Setup (Recommended)
 
@@ -15,11 +15,11 @@ fapictl wizard
 ```
 
 This will guide you through:
-- ✅ Configuring your OAuth 2.0/FAPI setup
-- ✅ Selecting appropriate compliance profiles  
-- ✅ Generating required cryptographic materials
-- ✅ Creating configuration files
-- ✅ Running your first compliance tests
+- Configuring your OAuth 2.0/FAPI setup
+- Selecting appropriate compliance profiles  
+- Generating required cryptographic materials
+- Creating configuration files
+- Running your first compliance tests
 
 ### 2. Manual Setup
 
@@ -84,7 +84,7 @@ fapictl test --profiles open-finance-br  # Includes all dependencies
 fapictl test --profiles oauth2-pkce,fapi-rw,mtls,jar,par
 ```
 
-## 📖 Documentation
+## Documentation
 
 - **[Profile Usage Guide](PROFILE_USAGE.md)** - Comprehensive guide for each FAPI profile
 - **[Configuration Examples](examples/)** - Ready-to-use configuration templates
@@ -95,14 +95,14 @@ fapictl test --profiles oauth2-pkce,fapi-rw,mtls,jar,par
 
 ## Features
 
-* ✅ Validate FAPI R/O and R/W profiles
-* 🔐 Test JWS request objects, JARM, PAR, and PKCE
-* 🔑 Validate access and ID token claims and structure
-* 📅 Replay protection via `jti`, `exp`, `nonce`
-* 🔍 Inspect token introspection and consent enforcement
-* ⚖ Check mutual TLS and `private_key_jwt` client authentication
-* 📊 Export detailed audit reports (JSON, YAML, HTML)
-* 🛠️ Modular profile plugin architecture for regional and optional extensions
+* Validate FAPI R/O and R/W profiles
+* Test JWS request objects, JARM, PAR, and PKCE
+* Validate access and ID token claims and structure
+* Replay protection via `jti`, `exp`, `nonce`
+* Inspect token introspection and consent enforcement
+* Check mutual TLS and `private_key_jwt` client authentication
+* Export detailed audit reports (JSON, YAML, HTML)
+* Modular profile plugin architecture for regional and optional extensions
 
 ---
 
@@ -110,7 +110,7 @@ fapictl test --profiles oauth2-pkce,fapi-rw,mtls,jar,par
 
 ### Option 1: Build from Source
 ```bash
-git clone https://github.com/your-org/fapictl.git
+git clone https://github.com/bigmeech/fapictl.git
 cd fapictl
 go build -o fapictl .
 ```
@@ -238,11 +238,11 @@ fapictl test --config fapictl-config.yaml --verbose --very-verbose
 
 | Command | Purpose |
 |---------|---------|
-| `fapictl wizard` | 🧙 Interactive setup wizard (recommended for new users) |
-| `fapictl test` | 🧪 Run FAPI compliance tests |
-| `fapictl profiles` | 📋 List and manage compliance profiles |
-| `fapictl generate` | 🔐 Generate cryptographic materials |
-| `fapictl validate` | ✅ Validate configurations and endpoints |
+| `fapictl wizard` | Interactive setup wizard (recommended for new users) |
+| `fapictl test` | Run FAPI compliance tests |
+| `fapictl profiles` | List and manage compliance profiles |
+| `fapictl generate` | Generate cryptographic materials |
+| `fapictl validate` | Validate configurations and endpoints |
 
 ### Test Command Options
 
@@ -275,17 +275,17 @@ fapictl generate [pkce|key|cert] [flags]
 
 fapictl supports a comprehensive set of FAPI compliance profiles organized by category:
 
-### 🔒 Mandatory Profiles (Core FAPI)
+### Mandatory Profiles (Core FAPI)
 - `oauth2-pkce` - OAuth 2.0 Authorization Code + PKCE (baseline requirement)
 - `fapi-ro` - FAPI 1.0 Read-Only Profile (account information access)
 - `fapi-rw` - FAPI 1.0 Read-Write Profile (payments and high-risk operations)
 
-### 🔧 Optional Profiles (Security Extensions)
+### Optional Profiles (Security Extensions)
 - `mtls` - Mutual TLS client authentication (RFC 8705)
 - `jar` - JWT Secured Authorization Request (RFC 9101)
 - `par` - Pushed Authorization Requests (RFC 9126)
 
-### 🌍 Regional Profiles (Regulatory Compliance)
+### Regional Profiles (Regulatory Compliance)
 - `ob-uk` - UK Open Banking (OBIE standards + PSD2 RTS)
 - `open-finance-br` - Brazilian Open Finance (Sistema Financeiro Aberto)
 
@@ -297,7 +297,7 @@ The system automatically resolves profile dependencies:
 - `ob-uk` → requires `fapi-rw` + `mtls` + `jar`
 - `open-finance-br` → requires `fapi-rw` + `mtls` + `jar`
 
-**📖 For detailed usage instructions for each profile, see [PROFILE_USAGE.md](PROFILE_USAGE.md)**
+**For detailed usage instructions for each profile, see [PROFILE_USAGE.md](PROFILE_USAGE.md)**
 
 ---
 
@@ -305,29 +305,29 @@ The system automatically resolves profile dependencies:
 
 ### Test Results
 ```text
-🧙 FAPI Compliance Test Results
+FAPI Compliance Test Results
 
-🔐 OAuth2 + PKCE Profile:
-  ✅ PKCE Challenge Generation .............. PASS
-  ✅ Authorization Request Construction ..... PASS
-  ✅ State Parameter Validation ............ PASS
-  ✅ Authorization Code Exchange ........... PASS
+OAuth2 + PKCE Profile:
+  PASS PKCE Challenge Generation
+  PASS Authorization Request Construction
+  PASS State Parameter Validation
+  PASS Authorization Code Exchange
 
-🛡️ FAPI Read-Only Profile:
-  ✅ HTTPS Enforcement ..................... PASS
-  ✅ TLS 1.2+ Validation ................... PASS
-  ✅ Authorization Server Metadata ......... PASS
-  ✅ Strong Client Authentication .......... PASS
+FAPI Read-Only Profile:
+  PASS HTTPS Enforcement
+  PASS TLS 1.2+ Validation
+  PASS Authorization Server Metadata
+  PASS Strong Client Authentication
 
-🏦 FAPI Read-Write Profile:
-  ✅ Request Object Signing ................ PASS
-  ✅ Enhanced Client Authentication ........ PASS
-  ✅ PAR Support ........................... PASS
-  ❌ Token Binding Validation .............. FAIL
+FAPI Read-Write Profile:
+  PASS Request Object Signing
+  PASS Enhanced Client Authentication
+  PASS PAR Support
+  FAIL Token Binding Validation
   
-🔒 Mutual TLS Profile:
-  ✅ Client Certificate Configuration ...... PASS
-  ✅ Certificate Chain Validation .......... PASS
+Mutual TLS Profile:
+  PASS Client Certificate Configuration
+  PASS Certificate Chain Validation
 
 Summary: 9 passed, 1 failed (90% compliance)
 Report saved to: fapi-compliance-report-2024-07-24.json
@@ -335,26 +335,26 @@ Report saved to: fapi-compliance-report-2024-07-24.json
 
 ### Interactive Wizard Output
 ```text
-🧙 FAPI Compliance Test Wizard
+FAPI Compliance Test Wizard
 
 Step 1 of 6: Basic Configuration
-✅ Client ID: my-fapi-client
-✅ Redirect URI: https://myapp.com/callback
-✅ Scopes: openid, accounts, payments
+Client ID: my-fapi-client
+Redirect URI: https://myapp.com/callback
+Scopes: openid, accounts, payments
 
 Step 2 of 6: OAuth 2.0 Endpoints
-✅ Authorization Endpoint: https://auth.bank.com/oauth2/authorize
-✅ Token Endpoint: https://auth.bank.com/oauth2/token
+Authorization Endpoint: https://auth.bank.com/oauth2/authorize
+Token Endpoint: https://auth.bank.com/oauth2/token
 
-🎉 Configuration wizard completed successfully!
+Configuration wizard completed successfully!
 
 Generated files:
-  📁 fapictl-config.yaml
-  📁 client-cert.pem
-  📁 client-key.pem
-  📁 jwt-signing-key.pem
+  fapictl-config.yaml
+  client-cert.pem
+  client-key.pem
+  jwt-signing-key.pem
 
-🚀 Running FAPI compliance tests...
+Running FAPI compliance tests...
 ```
 ---
 

@@ -61,6 +61,13 @@ config-dev.yaml
 *.pfx
 *.jks
 *.keystore
+*-key.pem
+*_key.pem
+private-key*
+*private*key*
+jwt-signing-key*
+client-key*
+*.priv
 
 # PKCE files
 *_verifier.txt
