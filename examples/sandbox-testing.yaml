@@ -1,0 +1,76 @@
+# Sandbox Testing Configuration
+# For testing against sandbox/development environments
+
+profiles:
+  - fapi-rw
+  - mtls
+  - jar
+
+# Sandbox Client Configuration  
+client_id: "sandbox-test-client"
+redirect_uri: "https://localhost:8080/callback"
+
+# Sandbox Server Endpoints
+authorization_endpoint: "https://sandbox.bank.com/oauth2/authorize"
+token_endpoint: "https://sandbox.bank.com/oauth2/token"
+par_endpoint: "https://sandbox.bank.com/oauth2/par"
+jwks_uri: "https://sandbox.bank.com/.well-known/jwks.json"
+introspection_endpoint: "https://sandbox.bank.com/oauth2/introspect"
+
+# OIDC Discovery
+oidc_config: "https://sandbox.bank.com/.well-known/openid-configuration"
+
+# Test Certificates (self-signed for sandbox)
+mtls:
+  cert: "./test-certs/sandbox-client.crt"
+  key: "./test-certs/sandbox-client.key"
+
+# Test JWT Signing Key
+private_key_jwt:
+  kid: "sandbox-signing-key"
+  key: "./test-keys/sandbox-signing.pem"
+
+# Test Scopes
+scopes:
+  - openid
+  - accounts
+  - payments
+  - profile
+  - email
+
+# Sandbox Specific Settings
+sandbox:
+  # Test data
+  test_user_id: "test-user-123"
+  test_account_id: "test-account-456"
+  
+  # Relaxed security for testing
+  skip_certificate_validation: true
+  allow_self_signed_certs: true
+  
+  # Test timeout settings
+  connect_timeout: 10
+  read_timeout: 30
+  
+  # Mock responses
+  enable_mock_responses: false
+  mock_response_delay: 0
+
+# Testing Notes:
+# =============
+# - Sandbox environments may have relaxed security
+# - Use test certificates and keys (not production)
+# - Test data may be reset periodically
+# - Rate limiting may be different from production
+# - Some features may be mocked or simplified
+#
+# Test Certificate Generation:
+# ===========================
+# fapictl generate cert --subject "CN=sandbox-client" --output-dir ./test-certs
+# fapictl generate key --type rsa --size 2048 --output sandbox-signing
+#
+# Common Sandbox Endpoints:
+# ========================
+# UK Open Banking: https://ob19-rs1.o3bank.co.uk (Model Bank)
+# Brazil: https://sandbox.directory.openbankingbrasil.org.br
+# Generic FAPI: Many providers offer sandbox environments

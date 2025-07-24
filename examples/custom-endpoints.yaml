@@ -1,0 +1,175 @@
+# Custom Endpoints Configuration
+# For testing with non-standard or custom endpoint configurations
+
+profiles:
+  - fapi-rw
+  - mtls
+  - jar
+
+# OAuth2 Client Configuration
+client_id: "custom-endpoints-client"
+redirect_uri: "https://your-app.com/oauth/callback"
+
+# Custom Authorization Server Endpoints
+authorization_endpoint: "https://custom-auth.bank.com/v2/oauth/authorize"
+token_endpoint: "https://custom-auth.bank.com/v2/oauth/token"
+
+# Custom FAPI Extensions
+par_endpoint: "https://custom-auth.bank.com/v2/oauth/pushed-auth-requests"
+introspection_endpoint: "https://custom-auth.bank.com/v2/oauth/token/introspect"
+revocation_endpoint: "https://custom-auth.bank.com/v2/oauth/token/revoke"
+
+# Custom Discovery and Key Endpoints
+jwks_uri: "https://custom-auth.bank.com/v2/oauth/keys"
+oidc_config: "https://custom-auth.bank.com/v2/.well-known/openid-configuration"
+
+# Custom Resource Server Endpoints
+resource_endpoints:
+  accounts: "https://api.bank.com/v3/accounts"
+  payments: "https://api.bank.com/v3/payments"
+  balances: "https://api.bank.com/v3/balances"
+  transactions: "https://api.bank.com/v3/transactions"
+  consents: "https://api.bank.com/v3/consents"
+
+# Additional Custom Endpoints
+custom_endpoints:
+  # Bank-specific extensions
+  bank_info: "https://api.bank.com/v1/bank-info"
+  branch_locator: "https://api.bank.com/v1/branches"
+  
+  # Compliance-specific endpoints
+  audit_logs: "https://audit.bank.com/v1/logs"
+  compliance_report: "https://compliance.bank.com/v1/reports"
+  
+  # Webhook endpoints
+  webhooks: "https://webhooks.bank.com/v1/events"
+  notifications: "https://notify.bank.com/v1/alerts"
+
+# mTLS Configuration
+mtls:
+  cert: "./certs/custom-client.crt"
+  key: "./certs/custom-client.key"
+
+# JWT Signing Configuration
+private_key_jwt:
+  kid: "custom-signing-key-2024"
+  key: "./keys/custom-signing.pem"
+
+# Custom Scopes (bank-specific)
+scopes:
+  - openid
+  - profile
+  - accounts
+  - payments
+  - custom:bank-products    # Bank-specific scope
+  - custom:credit-score     # Custom scope
+  - custom:investment-data  # Investment data scope
+
+# Custom Headers (if required by the bank)
+custom_headers:
+  "X-Bank-API-Version": "v2.1"
+  "X-Client-Type": "TPP"
+  "X-Request-ID": "generated-per-request"
+  "User-Agent": "YourApp/1.0 FAPI-Client"
+
+# Custom Authentication Methods
+custom_auth:
+  # Additional authentication methods
+  client_secret_basic: false
+  client_secret_post: false
+  private_key_jwt: true
+  tls_client_auth: true
+  
+  # Custom authentication headers
+  api_key_header: "X-API-Key"
+  # api_key_value: "your-api-key"  # Set via environment variable
+  
+  # OAuth2 token exchange
+  token_exchange_enabled: false
+  token_exchange_endpoint: "https://custom-auth.bank.com/v2/oauth/token/exchange"
+
+# Custom Validation Rules
+custom_validation:
+  # Token validation
+  access_token_format: "jwt"  # or "opaque"
+  id_token_required: true
+  refresh_token_required: false
+  
+  # Custom claims validation
+  required_claims:
+    - "iss"
+    - "sub"
+    - "aud"
+    - "exp"
+    - "iat"
+    - "bank_id"      # Custom claim
+    - "customer_id"  # Custom claim
+  
+  # Custom issuer validation
+  allowed_issuers:
+    - "https://custom-auth.bank.com"
+    - "https://backup-auth.bank.com"
+  
+  # Custom audience validation
+  expected_audiences:
+    - "your-client-id"
+    - "custom-resource-server"
+
+# Timeout Configurations for Custom Endpoints
+timeouts:
+  authorization: 30
+  token: 60
+  par: 45
+  introspection: 30
+  resource_api: 120
+  custom_endpoints: 60
+
+# Custom Endpoint Testing Notes:
+# =============================
+# This configuration is useful when testing against:
+# - Banks with non-standard endpoint paths
+# - Custom OAuth2/OIDC implementations
+# - Banks with additional proprietary endpoints
+# - Systems with custom authentication methods
+# - APIs with specific header requirements
+#
+# Common Customizations:
+# =====================
+# 1. Endpoint Paths: Some banks use different URL structures
+# 2. API Versions: Banks may version their APIs differently
+# 3. Custom Scopes: Bank-specific functionality scopes
+# 4. Headers: Required for bank identification or routing
+# 5. Authentication: Additional auth methods beyond standard
+#
+# Testing Strategy:
+# ================
+# 1. Validate standard FAPI endpoints work correctly
+# 2. Test custom endpoints respond appropriately
+# 3. Verify custom headers are processed
+# 4. Validate custom scopes are recognized
+# 5. Test custom authentication methods
+#
+# Usage Examples:
+# ==============
+# # Test with custom endpoints
+# fapictl test --config custom-endpoints.yaml
+#
+# # Validate custom endpoint connectivity
+# fapictl validate endpoint --url https://custom-auth.bank.com/v2/oauth/authorize
+#
+# # Test with custom headers and verbose output
+# fapictl test --config custom-endpoints.yaml --verbose
+#
+# Environment Variables for Secrets:
+# ==================================
+# Set sensitive values via environment variables:
+# export FAPICTL_API_KEY="your-secret-api-key"
+# export FAPICTL_CLIENT_SECRET="your-client-secret"
+#
+# Troubleshooting Custom Endpoints:
+# =================================
+# 1. Verify endpoint URLs are accessible
+# 2. Check required headers are included
+# 3. Validate custom scopes are supported
+# 4. Test authentication methods individually
+# 5. Review bank-specific documentation

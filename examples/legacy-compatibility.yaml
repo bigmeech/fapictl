@@ -1,0 +1,86 @@
+# Legacy Compatibility Configuration
+# Support for older single-profile configuration format
+
+# Legacy single profile format (still supported)
+profile: fapi-rw
+
+# OAuth2 Client Configuration
+client_id: "legacy-client-id"
+redirect_uri: "https://legacy-app.com/callback"
+
+# OAuth2 Server Endpoints
+authorization_endpoint: "https://legacy-auth.bank.com/oauth2/authorize"
+token_endpoint: "https://legacy-auth.bank.com/oauth2/token"
+par_endpoint: "https://legacy-auth.bank.com/oauth2/par"
+jwks_uri: "https://legacy-auth.bank.com/.well-known/jwks.json"
+
+# Legacy mTLS Configuration
+mtls:
+  cert: "./legacy-certs/client.crt"
+  key: "./legacy-certs/client.key"
+
+# Legacy JWT Configuration
+private_key_jwt:
+  kid: "legacy-key-id"
+  key: "./legacy-keys/signing.pem"
+
+# Legacy Scopes
+scopes:
+  - openid
+  - accounts
+  - payments
+
+# Legacy Configuration Notes:
+# ==========================
+# This configuration demonstrates the older single-profile format
+# that is still supported for backward compatibility.
+#
+# Migration Path:
+# ==============
+# Old format:
+#   profile: fapi-rw
+#
+# New format (equivalent):
+#   profiles:
+#     - oauth2-pkce
+#     - fapi-ro  
+#     - fapi-rw
+#
+# The new format is recommended because:
+# 1. More explicit about dependencies
+# 2. Allows testing multiple profiles
+# 3. Better error messages for missing dependencies
+# 4. More flexible configuration options
+#
+# Automatic Migration:
+# ===================
+# fapictl automatically converts legacy configurations:
+# - Single profile is converted to profile list
+# - Dependencies are automatically resolved
+# - No changes needed to existing configurations
+#
+# Mixed Format Support:
+# ====================
+# You can mix legacy and modern formats:
+#   profile: fapi-rw          # Legacy single profile
+#   profiles: [mtls, jar]     # Additional modern profiles
+#
+# This would result in: [oauth2-pkce, fapi-ro, fapi-rw, mtls, jar]
+#
+# Deprecation Timeline:
+# ====================
+# - Legacy format remains supported indefinitely
+# - New features may only be available in modern format
+# - Migration is recommended but not required
+# - Tools will provide migration assistance
+#
+# Usage Examples:
+# ==============
+# # Test legacy configuration
+# fapictl test --config legacy-compatibility.yaml
+#
+# # Convert to modern format
+# fapictl migrate config --input legacy-compatibility.yaml --output modern-config.yaml
+#
+# # Validate legacy configuration
+# fapictl validate config --config legacy-compatibility.yaml

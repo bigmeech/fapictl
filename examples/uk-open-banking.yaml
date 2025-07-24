@@ -1,0 +1,57 @@
+# UK Open Banking Configuration
+# Basic setup for UK Open Banking compliance testing
+
+profiles:
+  - ob-uk  # Includes fapi-rw, mtls, and jar automatically
+
+# OBIE Client Configuration
+client_id: "YOUR_OBIE_CLIENT_ID"  # From OBIE Directory
+redirect_uri: "https://your-tpp.com/oauth/callback"
+
+# UK Open Banking Server Endpoints (example: Santander)
+authorization_endpoint: "https://ob.santander.co.uk/oauth2/authorize"
+token_endpoint: "https://ob.santander.co.uk/oauth2/token"
+par_endpoint: "https://ob.santander.co.uk/oauth2/par"
+jwks_uri: "https://ob.santander.co.uk/.well-known/jwks.json"
+
+# OBIE Discovery (recommended)
+oidc_config: "https://ob.santander.co.uk/.well-known/openid-configuration"
+
+# OBIE Transport Certificate (from OBIE Directory)
+mtls:
+  cert: "./certs/obie-transport.pem"
+  key: "./certs/obie-transport-key.pem"
+
+# OBIE Signing Certificate (from OBIE Directory)
+private_key_jwt:
+  kid: "YOUR_OBIE_SIGNING_KID"  # From OBIE Directory
+  key: "./certs/obie-signing-key.pem"
+
+# UK Open Banking Scopes
+scopes:
+  - openid
+  - accounts          # Account Information Service (AIS)
+  - payments          # Payment Initiation Service (PIS)
+  - fundsconfirmations # Confirmation of Funds (CBPII)
+
+# UK Open Banking Notes:
+# =====================
+# 1. Register with OBIE Directory (https://directory.openbanking.org.uk)
+# 2. Obtain transport and signing certificates from OBIE
+# 3. Configure certificates in your OBIE Directory entry
+# 4. Each bank has different endpoints - update accordingly
+# 5. Test in OBIE sandbox before production
+#
+# Common UK Banks Endpoints:
+# ==========================
+# Santander: https://ob.santander.co.uk
+# Barclays: https://token.tiaa.bank.barclays.co.uk
+# HSBC: https://ob.hsbc.co.uk  
+# Lloyds: https://authorise-api.lloydsbanking.co.uk
+# NatWest: https://ob.natwest.com
+#
+# Service Types:
+# =============
+# AIS (Account Information): Read account data
+# PIS (Payment Initiation): Initiate payments
+# CBPII (Confirmation of Funds): Check available funds

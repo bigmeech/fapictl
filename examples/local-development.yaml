@@ -1,0 +1,68 @@
+# Local Development Configuration
+# For testing against local development servers
+
+profiles:
+  - oauth2-pkce
+  - fapi-ro
+
+# Local Development Client
+client_id: "local-dev-client"
+redirect_uri: "http://localhost:3000/callback"
+
+# Local Server Endpoints (assuming local auth server)
+authorization_endpoint: "http://localhost:8080/oauth2/authorize"
+token_endpoint: "http://localhost:8080/oauth2/token"
+jwks_uri: "http://localhost:8080/.well-known/jwks.json"
+
+# Optional: Local OIDC discovery
+# oidc_config: "http://localhost:8080/.well-known/openid-configuration"
+
+# Development Scopes
+scopes:
+  - openid
+  - profile
+  - accounts
+
+# Development Settings
+development:
+  # Local server settings
+  insecure_skip_verify: true  # For self-signed certificates
+  allow_http: true            # Allow non-HTTPS for local development
+  
+  # Debug settings
+  verbose_logging: true
+  log_http_requests: true
+  log_http_responses: true
+  
+  # Timeouts for local testing
+  connect_timeout: 5
+  read_timeout: 15
+
+# Local Development Notes:
+# =======================
+# - HTTP is allowed for local development only
+# - Self-signed certificates are acceptable
+# - Use simple scopes for initial testing
+# - Enable verbose logging for debugging
+# - Keep timeouts short for rapid iteration
+#
+# Local Auth Server Setup:
+# ========================
+# Many options available:
+# - Hydra (ORY): https://github.com/ory/hydra
+# - Keycloak: https://www.keycloak.org/
+# - Auth0 Local: For Auth0 development
+# - Custom implementations
+#
+# Quick Local Setup with Hydra:
+# =============================
+# docker run --rm -it \
+#   -p 4444:4444 -p 4445:4445 \
+#   oryd/hydra:latest serve all \
+#   --dangerous-force-http
+#
+# Testing Commands:
+# ================
+# fapictl test --config local-development.yaml --verbose
+# fapictl test --profiles oauth2-pkce --allow-http
+# fapictl validate endpoint --url http://localhost:8080/oauth2/authorize

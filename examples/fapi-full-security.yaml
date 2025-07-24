@@ -1,0 +1,80 @@
+# Complete FAPI Security Configuration
+# Production-ready setup with all security features enabled
+
+profiles:
+  - fapi-rw  # Core FAPI Read-Write functionality
+  - mtls     # Mutual TLS client authentication
+  - jar      # JWT Secured Authorization Requests
+  - par      # Pushed Authorization Requests
+
+# OAuth2 Client Configuration
+client_id: "YOUR_PRODUCTION_CLIENT_ID"
+redirect_uri: "https://your-production-app.com/oauth/callback"
+
+# FAPI Server Endpoints
+authorization_endpoint: "https://api.bank.com/oauth2/authorize"
+token_endpoint: "https://api.bank.com/oauth2/token"
+par_endpoint: "https://api.bank.com/oauth2/par"
+jwks_uri: "https://api.bank.com/.well-known/jwks.json"
+introspection_endpoint: "https://api.bank.com/oauth2/introspect"
+
+# OpenID Connect Discovery (optional but recommended)
+oidc_config: "https://api.bank.com/.well-known/openid-configuration"
+
+# Mutual TLS Configuration
+mtls:
+  cert: "/etc/ssl/certs/production-client.crt"
+  key: "/etc/ssl/private/production-client.key"
+
+# JWT Request Object Signing
+private_key_jwt:
+  kid: "prod-signing-key-2024"
+  key: "/etc/ssl/private/jwt-signing.pem"
+
+# Production Scopes
+scopes:
+  - openid
+  - accounts
+  - payments
+  - fundsconfirmation
+  - profile
+  - email
+
+# Security Notes:
+# ================
+# This configuration provides maximum FAPI security:
+# 
+# 1. Mutual TLS (mTLS):
+#    - Strong client authentication using certificates
+#    - Certificate-bound access tokens
+#    - Transport-layer security
+#
+# 2. JWT Secured Authorization Requests (JAR):
+#    - Signed request objects prevent parameter tampering
+#    - Enhanced authorization request security
+#    - Cryptographic integrity protection
+#
+# 3. Pushed Authorization Requests (PAR):
+#    - Pre-registration of authorization requests
+#    - Reduced attack surface for large requests
+#    - Enhanced security for mobile applications
+#
+# 4. FAPI Read-Write:
+#    - Full FAPI 1.0 compliance
+#    - Payment initiation security
+#    - Account modification protections
+#    - Consent management
+#
+# Certificate Management:
+# ======================
+# - Keep certificates current and properly configured
+# - Use proper certificate chains to trusted CAs
+# - Implement certificate rotation procedures
+# - Monitor certificate expiration dates
+#
+# Key Management:
+# ==============
+# - Use hardware security modules (HSMs) for production
+# - Implement proper key rotation procedures
+# - Use strong key sizes (RSA 2048+, ECDSA P-256+)
+# - Protect private keys with proper access controls

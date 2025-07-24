@@ -1,0 +1,175 @@
+# Brazilian Open Finance Production Configuration
+# Production-ready setup for Sistema Financeiro Aberto
+
+profiles:
+  - open-finance-br  # Full Brazilian Open Finance compliance
+
+# Production BCB Client Configuration
+client_id: "12345678-1234-5678-9012-123456789abc"  # BCB Client ID format
+redirect_uri: "https://your-production-fintech.com.br/oauth/redirect"
+
+# Production Bank Endpoints
+authorization_endpoint: "https://api.banco.com.br/open-banking/oauth2/authorize"
+token_endpoint: "https://api.banco.com.br/open-banking/oauth2/token"
+par_endpoint: "https://api.banco.com.br/open-banking/oauth2/par"
+jwks_uri: "https://api.banco.com.br/open-banking/.well-known/jwks.json"
+
+# Resource Server Endpoints
+accounts_base_url: "https://api.banco.com.br/open-banking/accounts/v2"
+payments_base_url: "https://api.banco.com.br/open-banking/payments/v3"
+consents_base_url: "https://api.banco.com.br/open-banking/consents/v2"
+
+# OIDC Discovery
+oidc_config: "https://api.banco.com.br/open-banking/.well-known/openid-configuration"
+
+# Production BCB Transport Certificate
+mtls:
+  cert: "/etc/bcb/production/transport.pem"
+  key: "/etc/bcb/production/transport-key.pem"
+
+# Production BCB Signing Certificate  
+private_key_jwt:
+  kid: "bcb-prod-signing-2024"
+  key: "/etc/bcb/production/signing-key.pem"
+
+# Complete Brazilian Open Finance Scopes
+scopes:
+  - openid
+  - accounts
+  - resources
+  - payments
+  - consents
+  - customers
+  - credit-cards-accounts
+  - loans
+  - financings
+  - invoice-financings
+  - unarranged-accounts-overdraft
+
+# Production Brazilian Configuration
+brazil:
+  # Environment
+  environment: "production"
+  
+  # BCB Directory
+  directory_url: "https://data.directory.openbankingbrasil.org.br"
+  
+  # Organization Details
+  organisation_id: "YOUR_BCB_ORGANISATION_ID"
+  software_id: "YOUR_BCB_SOFTWARE_ID"
+  software_statement_id: "YOUR_SOFTWARE_STATEMENT_ID"
+  
+  # Customer Management
+  customer_types: ["CPF", "CNPJ"]
+  require_cpf_cnpj: true
+  
+  # PIX Configuration
+  pix:
+    enabled: true
+    pix_keys_enabled: true
+    qr_code_enabled: true
+    instant_payments: true
+  
+  # LGPD Compliance
+  lgpd:
+    data_retention_days: 90
+    consent_expiration_days: 365
+    data_portability_enabled: true
+    right_to_deletion_enabled: true
+    
+  # Consent Management
+  consent:
+    granular_permissions: true
+    consent_revocation_enabled: true
+    consent_dashboard_required: true
+    automatic_consent_expiry: true
+
+# Security Configuration
+security:
+  # JWT Configuration
+  token_endpoint_auth_method: "private_key_jwt"
+  token_endpoint_auth_signing_alg: "PS256"
+  request_object_signing_alg: "PS256"
+  
+  # mTLS Configuration
+  tls_client_certificate_bound_access_tokens: true
+  
+  # FAPI Security
+  require_pushed_authorization_requests: true
+  require_signed_request_object: true
+  
+# Rate Limiting (BCB Requirements)
+rate_limits:
+  requests_per_second: 100
+  requests_per_minute: 6000
+  concurrent_requests: 50
+
+# Monitoring and Compliance
+monitoring:
+  # SLI/SLO Requirements
+  availability_target: 99.5
+  response_time_p95_ms: 1000
+  error_rate_threshold: 1.0
+  
+  # Audit Requirements
+  audit_logging: true
+  audit_retention_years: 7
+  
+  # Incident Response
+  incident_response_sla_minutes: 30
+  escalation_procedures: true
+
+# Production Checklist:
+# =====================
+# ✅ BCB Directory registration completed
+# ✅ Software Statement approved by BCB
+# ✅ Transport certificate issued and configured
+# ✅ Signing certificate issued and configured
+# ✅ LGPD compliance assessment completed
+# ✅ PIX integration tested and approved
+# ✅ Sandbox testing completed for all phases
+# ✅ Production readiness assessment passed
+# ✅ Customer consent mechanisms implemented
+# ✅ Data retention policies configured
+# ✅ Incident response procedures documented
+# ✅ Rate limiting and monitoring implemented
+#
+# BCB Certification Phases:
+# =========================
+# Phase 1: Customer data sharing (accounts, transactions)
+# Phase 2: Payment initiation services (PIX, TED, DOC)
+# Phase 3: Other financial services (loans, investments)
+# Phase 4: Data portability and advanced services
+#
+# Regulatory Compliance:
+# =====================
+# - BCB Resolution 32/2020: Technical standards
+# - BCB Resolution 33/2020: Data sharing requirements
+# - BCB Resolution 34/2020: Payment initiation
+# - LGPD (Law 13.709/2018): Data protection
+# - BCB Circular 4,015/2020: Operational procedures
+#
+# Certificate Management:
+# ======================
+# - BCB certificates expire every 2 years
+# - Implement automated certificate renewal
+# - Test certificate rotation in sandbox
+# - Maintain certificate backup procedures
+# - Monitor certificate expiration dates
+#
+# PIX Compliance:
+# ==============
+# - PIX keys management
+# - QR code generation and validation
+# - Instant payment processing
+# - PIX Directory integration
+# - Transaction monitoring and limits
+#
+# LGPD Requirements:
+# =================
+# - Data subject rights implementation
+# - Consent management and revocation
+# - Data portability mechanisms
+# - Data retention and deletion policies
+# - Privacy impact assessments
+# - Data protection officer appointment

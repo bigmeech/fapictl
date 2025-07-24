@@ -1,0 +1,161 @@
+# Multi-Profile Testing Configuration
+# Testing multiple FAPI profiles in a single configuration
+
+profiles:
+  - oauth2-pkce      # Base OAuth2 + PKCE
+  - fapi-ro          # FAPI Read-Only
+  - fapi-rw          # FAPI Read-Write  
+  - mtls             # Mutual TLS
+  - jar              # JWT Secured Authorization Request
+  - par              # Pushed Authorization Requests
+
+# OAuth2 Client Configuration
+client_id: "multi-profile-test-client"
+redirect_uri: "https://your-app.com/callback"
+
+# Comprehensive Server Endpoints
+authorization_endpoint: "https://fapi.bank.com/oauth2/authorize"
+token_endpoint: "https://fapi.bank.com/oauth2/token"
+par_endpoint: "https://fapi.bank.com/oauth2/par"
+jwks_uri: "https://fapi.bank.com/.well-known/jwks.json"
+introspection_endpoint: "https://fapi.bank.com/oauth2/introspect"
+oidc_config: "https://fapi.bank.com/.well-known/openid-configuration"
+
+# Mutual TLS Configuration
+mtls:
+  cert: "./certs/multi-test-client.crt"
+  key: "./certs/multi-test-client.key"
+
+# JWT Request Object Signing
+private_key_jwt:
+  kid: "multi-test-signing-key"
+  key: "./keys/multi-test-signing.pem"
+
+# Comprehensive Scopes
+scopes:
+  - openid
+  - profile
+  - email
+  - accounts
+  - transactions
+  - balances
+  - payments
+  - fundsconfirmation
+
+# Multi-Profile Testing Configuration
+testing:
+  # Profile execution order (optional)
+  profile_order:
+    - oauth2-pkce
+    - fapi-ro
+    - fapi-rw
+    - mtls
+    - jar
+    - par
+  
+  # Test isolation
+  isolate_profile_tests: true
+  
+  # Failure handling
+  stop_on_first_failure: false
+  continue_on_profile_failure: true
+  
+  # Reporting
+  generate_per_profile_reports: true
+  generate_combined_report: true
+  
+  # Timeout settings per profile
+  profile_timeouts:
+    oauth2-pkce: 60
+    fapi-ro: 90
+    fapi-rw: 120
+    mtls: 60
+    jar: 90
+    par: 60
+
+# Profile-Specific Configurations
+profile_configs:
+  # OAuth2 + PKCE specific settings
+  oauth2-pkce:
+    code_challenge_method: "S256"
+    state_required: true
+    
+  # FAPI Read-Only specific settings  
+  fapi-ro:
+    require_https: true
+    min_tls_version: "1.2"
+    validate_jwt_tokens: true
+    
+  # FAPI Read-Write specific settings
+  fapi-rw:
+    require_request_object: true
+    require_par: false  # Made optional since PAR profile is separate
+    validate_consent: true
+    
+  # mTLS specific settings
+  mtls:
+    verify_certificate_chain: true
+    check_certificate_revocation: false
+    require_certificate_binding: true
+    
+  # JAR specific settings
+  jar:
+    signing_algorithms: ["RS256", "ES256", "PS256"]
+    require_request_object_signing: true
+    validate_request_object_claims: true
+    
+  # PAR specific settings
+  par:
+    require_par_endpoint: true
+    par_request_timeout: 30
+    validate_request_uri: true
+
+# Multi-Profile Testing Notes:
+# ===========================
+# This configuration tests comprehensive FAPI compliance by combining
+# multiple profiles in a single test run. Each profile adds specific
+# requirements and validations.
+#
+# Profile Dependencies (automatically resolved):
+# - fapi-ro requires oauth2-pkce
+# - fapi-rw requires oauth2-pkce + fapi-ro
+# - Other profiles (mtls, jar, par) are independent extensions
+#
+# Testing Strategy:
+# ================
+# 1. Base OAuth2 + PKCE functionality
+# 2. FAPI Read-Only security requirements
+# 3. FAPI Read-Write enhanced security
+# 4. Mutual TLS client authentication
+# 5. JWT Secured Authorization Requests
+# 6. Pushed Authorization Requests
+#
+# Expected Test Flow:
+# ==================
+# 1. Validate basic OAuth2 + PKCE flow
+# 2. Verify FAPI Read-Only compliance (HTTPS, TLS version, etc.)
+# 3. Test FAPI Read-Write requirements (request objects, consent)
+# 4. Validate mTLS client certificate authentication
+# 5. Test JWT request object creation and validation
+# 6. Verify PAR endpoint functionality and request URI usage
+#
+# Certificate and Key Requirements:
+# ================================
+# - Client certificate for mTLS authentication
+# - Private key for JWT request object signing
+# - Both certificates should be properly configured
+# - Keys should use strong algorithms (RSA 2048+, ECDSA P-256+)
+#
+# Usage Examples:
+# ==============
+# # Test all profiles
+# fapictl test --config multi-profile-testing.yaml
+#
+# # Test specific profiles only
+# fapictl test --config multi-profile-testing.yaml --profiles oauth2-pkce,fapi-ro
+#
+# # Test with verbose output
+# fapictl test --config multi-profile-testing.yaml --verbose
+#
+# # Generate separate reports per profile
+# fapictl test --config multi-profile-testing.yaml --per-profile-reports

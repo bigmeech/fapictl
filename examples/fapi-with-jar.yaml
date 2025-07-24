@@ -1,0 +1,38 @@
+# FAPI with JWT Secured Authorization Requests
+# Enhanced security using signed request objects
+
+profiles:
+  - fapi-rw  # Core FAPI Read-Write
+  - jar      # JWT Secured Authorization Request
+
+# OAuth2 Client Configuration
+client_id: "YOUR_JAR_CLIENT_ID"
+redirect_uri: "https://your-app.com/callback"
+
+# FAPI Server Endpoints
+authorization_endpoint: "https://fapi.bank.com/oauth2/authorize"
+token_endpoint: "https://fapi.bank.com/oauth2/token"
+par_endpoint: "https://fapi.bank.com/oauth2/par"
+jwks_uri: "https://fapi.bank.com/.well-known/jwks.json"
+
+# JWT Request Object Signing
+private_key_jwt:
+  kid: "signing-key-2024"
+  key: "./keys/jwt-signing.pem"
+
+# Scopes for FAPI operations
+scopes:
+  - openid
+  - accounts
+  - payments
+  - fundsconfirmation
+
+# JWT Signing Requirements:
+# - RSA keys: 2048 bits minimum (4096 recommended)
+# - ECDSA keys: P-256 curve minimum (P-384/P-521 recommended)
+# - Supported algorithms: RS256, ES256, PS256
+# - Key must be in PEM format
+# - Key ID (kid) should be unique and descriptive
+#
+# Generate JWT signing keys with:
+# fapictl generate key --type rsa --size 2048 --output jwt-signing

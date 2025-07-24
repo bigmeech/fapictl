@@ -1,0 +1,102 @@
+# Comprehensive FAPI Configuration
+# Complete configuration with all available options
+
+profiles:
+  - oauth2-pkce
+  - fapi-ro
+  - fapi-rw
+  - mtls
+  - jar
+  - par
+
+# Client Configuration
+client_id: "comprehensive-fapi-client"
+redirect_uri: "https://your-app.com/oauth/callback"
+
+# Complete Endpoint Configuration
+authorization_endpoint: "https://fapi.bank.com/oauth2/authorize"
+token_endpoint: "https://fapi.bank.com/oauth2/token"
+par_endpoint: "https://fapi.bank.com/oauth2/par"
+jwks_uri: "https://fapi.bank.com/.well-known/jwks.json"
+introspection_endpoint: "https://fapi.bank.com/oauth2/introspect"
+revocation_endpoint: "https://fapi.bank.com/oauth2/revoke"
+oidc_config: "https://fapi.bank.com/.well-known/openid-configuration"
+
+# Mutual TLS Configuration
+mtls:
+  cert: "./certs/comprehensive-client.crt"
+  key: "./certs/comprehensive-client.key"
+
+# JWT Signing Configuration
+private_key_jwt:
+  kid: "comprehensive-signing-2024"
+  key: "./keys/comprehensive-signing.pem"
+
+# Complete Scope Configuration
+scopes:
+  - openid
+  - profile
+  - email
+  - address
+  - phone
+  - accounts
+  - transactions
+  - balances
+  - payments
+  - fundsconfirmation
+  - consents
+
+# Advanced Configuration Options
+advanced:
+  # Token configuration
+  access_token_format: "jwt"
+  id_token_required: true
+  refresh_token_required: true
+  
+  # Security configuration
+  require_https: true
+  min_tls_version: "1.2"
+  verify_certificates: true
+  
+  # PKCE configuration
+  code_challenge_method: "S256"
+  code_verifier_length: 128
+  
+  # Request object configuration
+  request_object_signing_alg: "PS256"
+  request_object_encryption_alg: "RSA-OAEP-256"
+  request_object_encryption_enc: "A256GCM"
+  
+  # Response configuration
+  response_type: "code"
+  response_mode: "query"
+  
+  # Grant types
+  grant_types:
+    - "authorization_code"
+    - "refresh_token"
+  
+  # Token endpoint authentication
+  token_endpoint_auth_method: "private_key_jwt"
+  token_endpoint_auth_signing_alg: "PS256"
+
+# Timeout Configuration
+timeouts:
+  connect: 30
+  read: 60
+  total: 300
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "json"
+  include_sensitive_data: false
+  log_requests: true
+  log_responses: true
+
+# Retry Configuration
+retry:
+  max_attempts: 3
+  backoff_strategy: "exponential"
+  initial_delay: 1
+  max_delay: 30

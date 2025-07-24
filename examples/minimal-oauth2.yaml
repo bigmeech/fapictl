@@ -1,0 +1,13 @@
+# Minimal OAuth2 Configuration
+# Absolute minimum configuration for OAuth2 testing
+
+profiles:
+  - oauth2-pkce
+
+client_id: "minimal-client"
+redirect_uri: "http://localhost:8080/callback"
+authorization_endpoint: "https://auth.example.com/oauth2/authorize"
+token_endpoint: "https://auth.example.com/oauth2/token"
+
+scopes:
+  - openid

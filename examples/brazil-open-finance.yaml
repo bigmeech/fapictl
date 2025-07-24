@@ -1,0 +1,82 @@
+# Brazilian Open Finance Configuration
+# Basic setup for Sistema Financeiro Aberto (SFA) compliance
+
+profiles:
+  - open-finance-br  # Includes fapi-rw, mtls, and jar automatically
+
+# Brazilian Open Finance Client Configuration
+client_id: "YOUR_BCB_CLIENT_ID"  # From BCB Directory
+redirect_uri: "https://your-fintech.com.br/oauth/callback"
+
+# Brazilian Bank Endpoints (example bank)
+authorization_endpoint: "https://auth.banco.com.br/oauth2/authorize"
+token_endpoint: "https://auth.banco.com.br/oauth2/token"
+par_endpoint: "https://auth.banco.com.br/oauth2/par"
+jwks_uri: "https://auth.banco.com.br/.well-known/jwks.json"
+
+# OpenID Connect Discovery
+oidc_config: "https://auth.banco.com.br/.well-known/openid-configuration"
+
+# BCB Transport Certificate (from BCB Directory)
+mtls:
+  cert: "./certs/bcb-transport.pem"
+  key: "./certs/bcb-transport-key.pem"
+
+# BCB Signing Certificate (from BCB Directory)
+private_key_jwt:
+  kid: "YOUR_BCB_SIGNING_KID"  # From BCB Directory
+  key: "./certs/bcb-signing-key.pem"
+
+# Brazilian Open Finance Scopes
+scopes:
+  - openid
+  - accounts           # Dados Cadastrais e Transacionais
+  - resources          # Recursos
+  - payments           # Pagamentos
+  - consents           # Consentimentos
+  - customers          # Clientes
+
+# Brazilian Specific Configuration
+brazil:
+  # Customer identification
+  customer_type: "CPF"  # CPF (individuals) or CNPJ (companies)
+  
+  # PIX integration
+  pix_enabled: true
+  
+  # LGPD compliance
+  data_retention_days: 90
+  consent_expiration_days: 365
+
+# Brazilian Open Finance Notes:
+# ============================
+# 1. Register with BCB Directory (Diretório de Participantes)
+# 2. Obtain transport and signing certificates from BCB
+# 3. Configure certificates in your BCB Directory entry
+# 4. Comply with LGPD (Lei Geral de Proteção de Dados)
+# 5. Test in BCB sandbox before production
+#
+# Key Regulations:
+# ===============
+# - Resolução BCB nº 32/2020 (Open Banking structure)
+# - Resolução BCB nº 33/2020 (Data sharing)
+# - Resolução BCB nº 34/2020 (Payment initiation)
+# - LGPD (Lei nº 13.709/2018) - Data protection
+#
+# Customer Types:
+# ==============
+# CPF: Cadastro de Pessoas Físicas (individuals)
+# CNPJ: Cadastro Nacional da Pessoa Jurídica (companies)
+#
+# PIX Integration:
+# ===============
+# PIX is Brazil's instant payment system
+# Required for payment initiation services
+# Must comply with BCB PIX regulations
+#
+# Data Categories:
+# ===============
+# - Dados Cadastrais: Customer registration data
+# - Dados Transacionais: Transaction data
+# - Dados de Produtos e Serviços: Product and service data
+# - Iniciação de Pagamentos: Payment initiation

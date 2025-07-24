@@ -1,0 +1,34 @@
+# Single profile (legacy)
+# profile: fapi-ro
+
+# Multiple profiles (new modular approach)
+profiles:
+  - oauth2-pkce      # OAuth2 baseline (always recommended)
+  - fapi-ro          # FAPI Read-Only profile  
+  - mtls             # Mutual TLS authentication
+  - jar              # JWT secured authorization requests
+
+client_id: "test-client-id"
+redirect_uri: "https://client.app/callback"
+
+authorization_endpoint: "https://demo.authserver.com/oauth2/authorize"
+token_endpoint: "https://demo.authserver.com/oauth2/token"
+par_endpoint: "https://demo.authserver.com/oauth2/par"
+introspection_endpoint: "https://demo.authserver.com/oauth2/introspect"
+jwks_uri: "https://demo.authserver.com/.well-known/jwks.json"
+oidc_config: "https://demo.authserver.com/.well-known/openid-configuration"
+
+# Optional: Mutual TLS configuration
+# mtls:
+#   cert: "./certs/client.crt"
+#   key: "./certs/client.key"
+
+# Optional: Private Key JWT configuration
+# private_key_jwt:
+#   kid: "key1"
+#   key: "./keys/private.pem"
+
+scopes:
+  - openid
+  - accounts
+  - transactions

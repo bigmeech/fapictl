@@ -1,0 +1,169 @@
+# CI/CD Pipeline Testing Configuration
+# Optimized for automated testing in CI/CD environments
+
+profiles:
+  - oauth2-pkce
+  - fapi-ro
+  - fapi-rw
+
+# CI/CD Client Configuration
+client_id: "ci-test-client"
+redirect_uri: "https://ci-test-app.example.com/callback"
+
+# Test Environment Endpoints
+authorization_endpoint: "https://test.authserver.com/oauth2/authorize"
+token_endpoint: "https://test.authserver.com/oauth2/token"
+jwks_uri: "https://test.authserver.com/.well-known/jwks.json"
+oidc_config: "https://test.authserver.com/.well-known/openid-configuration"
+
+# Scopes for CI testing
+scopes:
+  - openid
+  - accounts
+
+# CI/CD Specific Settings
+ci_cd:
+  # Timeouts optimized for CI environments
+  connect_timeout: 30
+  read_timeout: 60
+  total_timeout: 300
+  
+  # Retry configuration
+  max_retries: 3
+  retry_delay: 5
+  
+  # Output configuration
+  output_format: "json"
+  suppress_interactive_prompts: true
+  
+  # Test isolation
+  test_isolation: true
+  cleanup_after_test: true
+  
+  # Parallel execution
+  parallel_tests: false  # Set true if tests are thread-safe
+  
+  # Environment detection
+  detect_ci_environment: true
+
+# Environment Variables (for CI/CD systems)
+# These can be overridden by environment variables:
+# 
+# FAPICTL_CLIENT_ID: Override client_id
+# FAPICTL_CLIENT_SECRET: Client secret (if needed)
+# FAPICTL_AUTH_ENDPOINT: Override authorization_endpoint
+# FAPICTL_TOKEN_ENDPOINT: Override token_endpoint
+# FAPICTL_TEST_TIMEOUT: Override total test timeout
+# FAPICTL_OUTPUT_FORMAT: Override output format
+# FAPICTL_LOG_LEVEL: Set logging level (debug, info, warn, error)
+
+# CI/CD Pipeline Examples:
+# =======================
+
+# GitHub Actions Example:
+# -----------------------
+# name: FAPI Compliance Tests
+# on: [push, pull_request]
+# jobs:
+#   fapi-tests:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: actions/setup-go@v4
+#         with:
+#           go-version: '1.21'
+#       - name: Build fapictl
+#         run: go build -o fapictl .
+#       - name: Run FAPI tests
+#         run: ./fapictl test --config examples/ci-cd-testing.yaml
+#         env:
+#           FAPICTL_CLIENT_ID: ${{ secrets.TEST_CLIENT_ID }}
+#           FAPICTL_OUTPUT_FORMAT: json
+
+# GitLab CI Example:
+# ------------------
+# fapi_compliance:
+#   stage: test
+#   image: golang:1.21
+#   script:
+#     - go build -o fapictl .
+#     - ./fapictl test --config examples/ci-cd-testing.yaml
+#   variables:
+#     FAPICTL_CLIENT_ID: $TEST_CLIENT_ID
+#     FAPICTL_OUTPUT_FORMAT: json
+#   artifacts:
+#     reports:
+#       junit: fapi-test-results.xml
+#     paths:
+#       - fapi-compliance-report.json
+
+# Jenkins Pipeline Example:
+# -------------------------
+# pipeline {
+#   agent any
+#   environment {
+#     FAPICTL_CLIENT_ID = credentials('test-client-id')
+#     FAPICTL_OUTPUT_FORMAT = 'json'
+#   }
+#   stages {
+#     stage('Build') {
+#       steps {
+#         sh 'go build -o fapictl .'
+#       }
+#     }
+#     stage('FAPI Tests') {
+#       steps {
+#         sh './fapictl test --config examples/ci-cd-testing.yaml'
+#       }
+#       post {
+#         always {
+#           archiveArtifacts artifacts: 'fapi-compliance-report.json'
+#           publishTestResults testResultsPattern: 'fapi-test-results.xml'
+#         }
+#       }
+#     }
+#   }
+# }
+
+# Azure DevOps Example:
+# --------------------
+# trigger:
+#   - main
+# pool:
+#   vmImage: 'ubuntu-latest'
+# variables:
+#   FAPICTL_OUTPUT_FORMAT: 'json'
+# steps:
+#   - task: GoTool@0
+#     inputs:
+#       version: '1.21'
+#   - script: go build -o fapictl .
+#     displayName: 'Build fapictl'
+#   - script: ./fapictl test --config examples/ci-cd-testing.yaml
+#     displayName: 'Run FAPI compliance tests'
+#     env:
+#       FAPICTL_CLIENT_ID: $(TEST_CLIENT_ID)
+
+# Docker Container Testing:
+# =========================
+# FROM golang:1.21-alpine
+# WORKDIR /app
+# COPY . .
+# RUN go build -o fapictl .
+# CMD ["./fapictl", "test", "--config", "examples/ci-cd-testing.yaml"]
+
+# Test Result Integration:
+# =======================
+# - Output JSON results for easy parsing
+# - Generate JUnit XML for test reporting
+# - Archive compliance reports as artifacts
+# - Set up notifications for test failures
+# - Track compliance metrics over time
+
+# Security Considerations:
+# =======================
+# - Store sensitive credentials in CI/CD secrets
+# - Use temporary test clients when possible
+# - Rotate test credentials regularly
+# - Audit CI/CD access to production systems
+# - Separate test and production configurations

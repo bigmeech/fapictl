@@ -1,0 +1,21 @@
+# Basic OAuth2 + PKCE Configuration
+# Minimal setup for OAuth2 Authorization Code flow with PKCE
+
+profiles:
+  - oauth2-pkce
+
+# OAuth2 Client Configuration
+client_id: "YOUR_CLIENT_ID"
+redirect_uri: "https://your-app.com/callback"
+
+# OAuth2 Server Endpoints
+authorization_endpoint: "https://auth.provider.com/oauth2/authorize"
+token_endpoint: "https://auth.provider.com/oauth2/token"
+
+# Requested Scopes
+scopes:
+  - openid
+  - profile
+
+# Optional: OpenID Connect Discovery
+# oidc_config: "https://auth.provider.com/.well-known/openid-configuration"

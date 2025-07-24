@@ -1,0 +1,34 @@
+# FAPI Read-Write Profile Configuration
+# For payment initiation and high-risk operations
+
+profiles:
+  - fapi-rw  # Automatically includes oauth2-pkce and fapi-ro
+
+# OAuth2 Client Configuration
+client_id: "YOUR_FAPI_RW_CLIENT_ID"
+redirect_uri: "https://your-app.com/callback"
+
+# FAPI Server Endpoints
+authorization_endpoint: "https://fapi.bank.com/oauth2/authorize"
+token_endpoint: "https://fapi.bank.com/oauth2/token"
+par_endpoint: "https://fapi.bank.com/oauth2/par"
+jwks_uri: "https://fapi.bank.com/.well-known/jwks.json"
+
+# Optional: Additional endpoints
+# introspection_endpoint: "https://fapi.bank.com/oauth2/introspect"
+# oidc_config: "https://fapi.bank.com/.well-known/openid-configuration"
+
+# Payment and Account Scopes
+scopes:
+  - openid
+  - accounts
+  - payments
+  - fundsconfirmation
+
+# Note: FAPI Read-Write typically requires:
+# 1. Mutual TLS (mtls profile) OR
+# 2. Private Key JWT (configured below or jar profile)
+# 3. Request objects (jar profile recommended)
+#
+# For production use, combine with security profiles:
+# profiles: [fapi-rw, mtls, jar]

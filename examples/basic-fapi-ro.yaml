@@ -1,0 +1,28 @@
+# FAPI Read-Only Profile Configuration
+# For account information services and read-only API access
+
+profiles:
+  - fapi-ro  # Automatically includes oauth2-pkce
+
+# OAuth2 Client Configuration
+client_id: "YOUR_FAPI_RO_CLIENT_ID"
+redirect_uri: "https://your-app.com/callback"
+
+# FAPI Server Endpoints
+authorization_endpoint: "https://fapi.bank.com/oauth2/authorize"
+token_endpoint: "https://fapi.bank.com/oauth2/token"
+jwks_uri: "https://fapi.bank.com/.well-known/jwks.json"
+
+# Optional: Additional OIDC endpoints
+# oidc_config: "https://fapi.bank.com/.well-known/openid-configuration"
+# introspection_endpoint: "https://fapi.bank.com/oauth2/introspect"
+
+# Account Information Scopes
+scopes:
+  - openid
+  - accounts
+  - transactions
+  - balances
+
+# Optional: Custom timeout settings
+# timeout: 30s

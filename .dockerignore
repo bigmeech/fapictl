@@ -1,0 +1,32 @@
+# Binaries
+build/
+dist/
+fapictl
+*.exe
+
+# Development files
+.git/
+.github/
+.vscode/
+.idea/
+
+# Test files
+coverage.out
+coverage.html
+*.test
+
+# Documentation
+*.md
+docs/
+
+# CI/CD
+.github/
+Makefile
+
+# Docker
+Dockerfile*
+.dockerignore
+
+# Temporary files
+*.tmp
+*.log

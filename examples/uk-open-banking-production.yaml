@@ -1,0 +1,101 @@
+# UK Open Banking Production Configuration
+# Production-ready setup with proper OBIE Directory integration
+
+profiles:
+  - ob-uk  # Full UK Open Banking compliance
+
+# OBIE Production Client Configuration
+client_id: "0015800001041REAAY"  # Example OBIE Client ID format
+redirect_uri: "https://your-production-tpp.com/redirect"
+
+# Production Bank Endpoints (example: production bank)
+authorization_endpoint: "https://api.bank.com/open-banking/v3.1/aisp/authorize"
+token_endpoint: "https://api.bank.com/open-banking/v3.1/aisp/token"
+par_endpoint: "https://api.bank.com/open-banking/v3.1/aisp/par"
+jwks_uri: "https://api.bank.com/open-banking/v3.1/.well-known/jwks.json"
+
+# OBIE Resource Endpoints
+resource_base_url: "https://api.bank.com/open-banking/v3.1/aisp"
+payment_base_url: "https://api.bank.com/open-banking/v3.1/pisp"
+
+# OBIE Discovery
+oidc_config: "https://api.bank.com/open-banking/v3.1/.well-known/openid-configuration"
+
+# Production OBIE Transport Certificate
+mtls:
+  cert: "/etc/obie/production/transport.pem"
+  key: "/etc/obie/production/transport-key.pem"
+
+# Production OBIE Signing Certificate
+private_key_jwt:
+  kid: "rDEKRWJIgbWeLqJDU4NxZg"  # Real OBIE signing key ID
+  key: "/etc/obie/production/signing-key.pem"
+
+# Full UK Open Banking Scopes
+scopes:
+  - openid
+  - accounts
+  - payments
+  - fundsconfirmations
+
+# Production Environment Settings
+environment: "production"
+require_consent: true
+consent_timeout: 300
+
+# OBIE Specific Configuration
+obie:
+  directory_url: "https://directory.openbanking.org.uk"
+  software_statement_id: "YOUR_SOFTWARE_STATEMENT_ID"
+  software_id: "YOUR_SOFTWARE_ID"
+  organisation_id: "YOUR_ORGANISATION_ID"
+  
+  # Intent registration
+  intent_lifetime: 86400  # 24 hours
+  consent_lifetime: 7776000  # 90 days
+
+# Security Configuration
+security:
+  require_signed_request_object: true
+  require_request_uri: true
+  token_endpoint_auth_method: "private_key_jwt"
+  token_endpoint_auth_signing_alg: "PS256"
+  
+# Production Checklist:
+# ====================
+# ✅ OBIE Directory registration complete
+# ✅ Software Statement created and approved
+# ✅ Transport certificate issued and installed
+# ✅ Signing certificate issued and installed  
+# ✅ Dynamic Client Registration tested
+# ✅ Bank onboarding completed
+# ✅ Sandbox testing passed
+# ✅ Production readiness assessment completed
+# ✅ Incident response procedures documented
+# ✅ Certificate rotation procedures implemented
+# ✅ Monitoring and alerting configured
+#
+# Certificate Management:
+# ======================
+# - OBIE certificates expire every 2 years
+# - Implement automated certificate renewal
+# - Monitor certificate expiration dates
+# - Test certificate rotation in sandbox first
+# - Maintain backup certificates
+#
+# Compliance Requirements:
+# =======================
+# - Follow OBIE Operational Guidelines
+# - Implement proper consent management
+# - Maintain audit logs for 7 years
+# - Comply with GDPR/UK DPA 2018
+# - Follow PCI DSS for payment data
+# - Implement proper customer authentication
+#
+# Bank-Specific Considerations:
+# ============================
+# - Each bank may have specific requirements
+# - Some banks require additional registration
+# - Rate limiting varies by bank
+# - Error handling may be bank-specific
+# - Test with multiple banks before production

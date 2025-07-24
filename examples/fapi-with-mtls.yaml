@@ -1,0 +1,37 @@
+# FAPI with Mutual TLS Authentication
+# Strong client authentication using client certificates
+
+profiles:
+  - fapi-rw  # Core FAPI Read-Write
+  - mtls     # Mutual TLS authentication
+
+# OAuth2 Client Configuration
+client_id: "YOUR_MTLS_CLIENT_ID"
+redirect_uri: "https://your-app.com/callback"
+
+# FAPI Server Endpoints
+authorization_endpoint: "https://fapi.bank.com/oauth2/authorize"
+token_endpoint: "https://fapi.bank.com/oauth2/token"
+par_endpoint: "https://fapi.bank.com/oauth2/par"
+jwks_uri: "https://fapi.bank.com/.well-known/jwks.json"
+
+# Mutual TLS Configuration
+mtls:
+  cert: "./certs/client.crt"
+  key: "./certs/client.key"
+
+# Scopes for FAPI operations
+scopes:
+  - openid
+  - accounts
+  - payments
+  - fundsconfirmation
+
+# Certificate Requirements:
+# - X.509 certificate with proper key usage
+# - Valid certificate chain to trusted CA
+# - Private key must match certificate
+# - Certificate must not be expired or revoked
+#
+# Generate certificates with:
+# fapictl generate cert --subject "CN=my-client" --output-dir ./certs
