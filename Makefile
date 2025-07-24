@@ -12,7 +12,7 @@ BUILD_DIR=build
 DIST_DIR=dist
 
 # Go related variables
-GOCMD=go
+GOCMD=env -u GOROOT go
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
