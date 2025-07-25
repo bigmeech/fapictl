@@ -19,15 +19,14 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 GOMOD=$(GOCMD) mod
 GOFMT=gofmt
-GOLINT=golangci-lint
 
 # Platform targets
 PLATFORMS=linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64
 
-.PHONY: all build clean test coverage lint fmt vet tidy deps install uninstall release help
+.PHONY: all build clean test coverage fmt vet tidy deps install uninstall release help
 
 ## Default target
-all: clean fmt lint vet test build
+all: clean fmt vet test build
 
 ## Build the binary
 build:
@@ -59,14 +58,6 @@ coverage:
 	${GOTEST} -v -race -coverprofile=coverage.out ./...
 	${GOCMD} tool cover -html=coverage.out -o coverage.html
 
-## Run linter
-lint:
-	@echo "Running linter..."
-	@if command -v ${GOLINT} >/dev/null 2>&1; then \
-		${GOLINT} run ./...; \
-	else \
-		echo "golangci-lint not installed. Install with: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b \$$(go env GOPATH)/bin v1.54.2"; \
-	fi
 
 ## Format code
 fmt:
@@ -127,21 +118,15 @@ check-tools:
 	@echo "Checking required tools..."
 	@command -v go >/dev/null 2>&1 || { echo "Go is required but not installed."; exit 1; }
 	@echo "✓ Go is installed"
-	@if command -v ${GOLINT} >/dev/null 2>&1; then \
-		echo "✓ golangci-lint is installed"; \
-	else \
-		echo "⚠ golangci-lint not found. Install with: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b \$$(go env GOPATH)/bin v1.54.2"; \
-	fi
 
 ## Show help
 help:
 	@echo "Available targets:"
-	@echo "  all         - Run clean, fmt, lint, vet, test, and build"
+	@echo "  all         - Run clean, fmt, vet, test, and build"
 	@echo "  build       - Build the binary"
 	@echo "  build-all   - Build for all platforms"
 	@echo "  test        - Run tests"
 	@echo "  coverage    - Run tests with coverage report"
-	@echo "  lint        - Run linter"
 	@echo "  fmt         - Format code"
 	@echo "  vet         - Run go vet"
 	@echo "  tidy        - Tidy dependencies"

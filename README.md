@@ -117,7 +117,7 @@ go build -o fapictl .
 
 ### Option 2: Go Install (when published)
 ```bash
-go install github.com/your-org/fapictl@latest
+go install github.com/bigmeech/fapictl@latest
 ```
 
 ### Option 3: Download Binary (when available)
