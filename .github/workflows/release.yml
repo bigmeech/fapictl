@@ -89,7 +89,7 @@ jobs:
           
           ### Using Go
           ```bash
-          go install github.com/your-org/fapictl@${{ steps.get_version.outputs.version }}
+          go install github.com/bigmeech/fapictl@${{ steps.get_version.outputs.version }}
           ```
           
           ### Binary Download
