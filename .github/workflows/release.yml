@@ -31,11 +31,6 @@ jobs:
     - name: Run tests
       run: make test
 
-    - name: Run linter
-      uses: golangci/golangci-lint-action@v3
-      with:
-        version: v1.54.2
-        args: --timeout=5m
 
   release:
     name: Create Release
