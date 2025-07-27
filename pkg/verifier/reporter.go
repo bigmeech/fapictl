@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"fapictl/pkg/colors"
 	yaml "gopkg.in/yaml.v3"
 )
 
@@ -142,37 +143,39 @@ func (r *Reporter) generateHTMLReport(suites []*TestSuite, writer io.Writer) err
 func (r *Reporter) generateTextReport(suites []*TestSuite, writer io.Writer) error {
 	overall := r.calculateOverallSummary(suites)
 
-	fmt.Fprintf(writer, "FAPI Compliance Test Report\n")
-	fmt.Fprintf(writer, "Generated: %s\n\n", time.Now().Format("2006-01-02 15:04:05 UTC"))
+	fmt.Fprintf(writer, colors.Header("FAPI Compliance Test Report")+"\n")
+	fmt.Fprintf(writer, colors.Gray("Generated: %s")+"\n\n", time.Now().Format("2006-01-02 15:04:05 UTC"))
 
 	for _, suite := range suites {
-		fmt.Fprintf(writer, "=== %s ===\n", suite.Name)
+		fmt.Fprintf(writer, colors.Header("=== %s ===")+"\n", suite.Name)
 		fmt.Fprintf(writer, "%s\n", suite.Description)
 		fmt.Fprintf(writer, "Duration: %s\n\n", suite.Duration)
 
 		for _, test := range suite.Tests {
-			status := test.Status
-			switch status {
+			var coloredStatus string
+			switch test.Status {
 			case StatusPass:
-				status = "PASS"
+				coloredStatus = colors.Success("PASS")
 			case StatusFail:
-				status = "FAIL"
+				coloredStatus = colors.Error("FAIL")
 			case StatusSkip:
-				status = "SKIP"
+				coloredStatus = colors.Skip("SKIP")
+			default:
+				coloredStatus = colors.Info(string(test.Status))
 			}
 
-			fmt.Fprintf(writer, "%-40s %s\n", test.Name, status)
+			fmt.Fprintf(writer, "%-40s %s\n", test.Name, coloredStatus)
 			if test.Error != "" {
-				fmt.Fprintf(writer, "  Error: %s\n", test.Error)
+				fmt.Fprintf(writer, "  "+colors.Error("Error: ")+"%s\n", test.Error)
 			}
 		}
 
-		fmt.Fprintf(writer, "\nSuite Summary: %d total, %d passed, %d failed, %d skipped\n\n",
+		fmt.Fprintf(writer, "\n"+colors.Key("Suite Summary: ")+"%d total, "+colors.Success("%d passed")+", "+colors.Error("%d failed")+", "+colors.Skip("%d skipped")+"\n\n",
 			suite.Summary.Total, suite.Summary.Passed, suite.Summary.Failed, suite.Summary.Skipped)
 	}
 
-	fmt.Fprintf(writer, "=== Overall Summary ===\n")
-	fmt.Fprintf(writer, "Total: %d | Passed: %d | Failed: %d | Skipped: %d\n",
+	fmt.Fprintf(writer, colors.Header("=== Overall Summary ===")+"\n")
+	fmt.Fprintf(writer, colors.Key("Total: ")+"%d | "+colors.Success("Passed: %d")+" | "+colors.Error("Failed: %d")+" | "+colors.Skip("Skipped: %d")+"\n",
 		overall.Total, overall.Passed, overall.Failed, overall.Skipped)
 
 	return nil

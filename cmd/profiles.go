@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"fapictl/pkg/colors"
 	"fapictl/pkg/profiles"
 	"github.com/spf13/cobra"
 )
@@ -44,8 +45,8 @@ func runProfiles(cmd *cobra.Command, args []string) {
 		case "regional":
 			profilesToShow = registry.ListByType(profiles.Regional)
 		default:
-			fmt.Printf("Unknown profile type: %s\n", profileType)
-			fmt.Println("Valid types: mandatory, optional, regional")
+			fmt.Printf(colors.Error("Unknown profile type: ")+"%s\n", profileType)
+			fmt.Println(colors.Info("Valid types: ") + "mandatory, optional, regional")
 			return
 		}
 	} else {
@@ -53,7 +54,7 @@ func runProfiles(cmd *cobra.Command, args []string) {
 	}
 
 	if len(profilesToShow) == 0 {
-		fmt.Println("No profiles found")
+		fmt.Println(colors.Warning("No profiles found"))
 		return
 	}
 
@@ -62,22 +63,22 @@ func runProfiles(cmd *cobra.Command, args []string) {
 		// Print type header if it changed
 		if string(profile.Type) != currentType {
 			currentType = string(profile.Type)
-			fmt.Printf("\n%s Profiles:\n", strings.Title(currentType))
-			fmt.Println(strings.Repeat("=", len(currentType)+10))
+			fmt.Printf("\n"+colors.Header("%s Profiles:")+"\n", strings.Title(currentType))
+			fmt.Println(colors.Header(strings.Repeat("=", len(currentType)+10)))
 		}
 
 		// Print profile information
-		fmt.Printf("  %s - %s\n", profile.ID, profile.Name)
+		fmt.Printf("  "+colors.Key("%s")+" - "+colors.Value("%s")+"\n", profile.ID, profile.Name)
 
 		if showDetails {
-			fmt.Printf("    Description: %s\n", profile.Description)
+			fmt.Printf("    "+colors.Gray("Description: ")+"%s\n", profile.Description)
 
 			if len(profile.Dependencies) > 0 {
-				fmt.Printf("    Dependencies: %s\n", strings.Join(profile.Dependencies, ", "))
+				fmt.Printf("    "+colors.Gray("Dependencies: ")+colors.Cyan("%s")+"\n", strings.Join(profile.Dependencies, ", "))
 			}
 
 			if len(profile.Conflicts) > 0 {
-				fmt.Printf("    Conflicts: %s\n", strings.Join(profile.Conflicts, ", "))
+				fmt.Printf("    "+colors.Gray("Conflicts: ")+colors.Warning("%s")+"\n", strings.Join(profile.Conflicts, ", "))
 			}
 
 			fmt.Println()
@@ -85,9 +86,9 @@ func runProfiles(cmd *cobra.Command, args []string) {
 	}
 
 	if !showDetails {
-		fmt.Printf("\nUse --details flag to show more information about each profile\n")
-		fmt.Printf("Example usage:\n")
-		fmt.Printf("  fapictl test --config config.yaml --profiles fapi-ro,mtls,jar\n")
-		fmt.Printf("  fapictl test --config config.yaml --profiles fapi-rw,ob-uk\n")
+		fmt.Printf("\n" + colors.Info("Use --details flag to show more information about each profile") + "\n")
+		fmt.Printf(colors.Header("Example usage:") + "\n")
+		fmt.Printf("  " + colors.Code("fapictl test --config config.yaml --profiles fapi-ro,mtls,jar") + "\n")
+		fmt.Printf("  " + colors.Code("fapictl test --config config.yaml --profiles fapi-rw,ob-uk") + "\n")
 	}
 }

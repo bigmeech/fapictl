@@ -185,11 +185,11 @@ func (m *wizardModel) View() string {
 	var s strings.Builder
 
 	// Header
-	s.WriteString(titleStyle.Render("🧙 FAPI Compliance Test Wizard"))
+	s.WriteString(titleStyle.Render("FAPI Compliance Test Wizard"))
 	s.WriteString("\n")
 
 	if m.dryRun {
-		s.WriteString(infoStyle.Render("🔍 DRY RUN MODE: No files will be created"))
+		s.WriteString(infoStyle.Render("DRY RUN MODE: No files will be created"))
 		s.WriteString("\n")
 	}
 
@@ -200,7 +200,7 @@ func (m *wizardModel) View() string {
 
 	// Error handling
 	if m.err != nil {
-		s.WriteString(errorStyle.Render(fmt.Sprintf("❌ Error: %v", m.err)))
+		s.WriteString(errorStyle.Render(fmt.Sprintf("Error: %v", m.err)))
 		s.WriteString("\n\n")
 	}
 
@@ -225,17 +225,17 @@ func (m *wizardModel) View() string {
 		s.WriteString(headerStyle.Render("Generate Materials"))
 		s.WriteString("\nGenerating cryptographic materials and configuration...\n\n")
 		if len(m.generated) > 0 {
-			s.WriteString(successStyle.Render("✅ Generated files:"))
+			s.WriteString(successStyle.Render("Generated files:"))
 			s.WriteString("\n")
 			for _, file := range m.generated {
-				s.WriteString(fmt.Sprintf("  📁 %s\n", file))
+				s.WriteString(fmt.Sprintf("  %s\n", file))
 			}
 			s.WriteString("\n")
 		}
 	case stepComplete:
 		s.WriteString(headerStyle.Render("Complete"))
 		s.WriteString("\n")
-		s.WriteString(successStyle.Render("🎉 Configuration wizard completed successfully!"))
+		s.WriteString(successStyle.Render("Configuration wizard completed successfully!"))
 		s.WriteString("\n\n")
 	}
 
@@ -706,7 +706,7 @@ func (m *wizardModel) executeTests() tea.Cmd {
 		// Build the configuration path
 		configPath := filepath.Join(m.outputDir, m.configFile)
 
-		fmt.Printf("\n🚀 Running FAPI compliance tests with configuration: %s\n\n", configPath)
+		fmt.Printf("\nRunning FAPI compliance tests with configuration: %s\n\n", configPath)
 
 		// Save current command line args
 		originalArgs := os.Args

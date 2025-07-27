@@ -182,6 +182,36 @@ func (v *AuthCodePKCEVerifier) testTokenEndpoint(config verifier.VerifierConfig)
 	}
 	defer resp.Body.Close()
 
+	// Validate HTTP status code - server errors indicate service unavailability
+	if resp.StatusCode >= 500 {
+		return verifier.TestResult{
+			Name:        "Token Endpoint Discovery",
+			Description: "Verify token endpoint is configured",
+			Status:      verifier.StatusFail,
+			Duration:    time.Since(startTime),
+			Error:       fmt.Sprintf("Token endpoint server error: %d %s", resp.StatusCode, resp.Status),
+			Details: map[string]interface{}{
+				"endpoint":    config.TokenEndpoint,
+				"status_code": resp.StatusCode,
+			},
+		}
+	}
+
+	// 4xx errors other than 405 (Method Not Allowed) indicate configuration issues
+	if resp.StatusCode >= 400 && resp.StatusCode != 405 {
+		return verifier.TestResult{
+			Name:        "Token Endpoint Discovery",
+			Description: "Verify token endpoint is configured",
+			Status:      verifier.StatusFail,
+			Duration:    time.Since(startTime),
+			Error:       fmt.Sprintf("Token endpoint client error: %d %s", resp.StatusCode, resp.Status),
+			Details: map[string]interface{}{
+				"endpoint":    config.TokenEndpoint,
+				"status_code": resp.StatusCode,
+			},
+		}
+	}
+
 	return verifier.TestResult{
 		Name:        "Token Endpoint Discovery",
 		Description: "Verify token endpoint is configured",
@@ -258,8 +288,23 @@ func (v *AuthCodePKCEVerifier) testTokenExchange(config verifier.VerifierConfig,
 		}
 	}
 
-	// We expect this to fail with invalid_grant since we're using a fake code
-	// But the server should properly handle the PKCE parameters
+	// Server errors (5xx) indicate service unavailability - should fail
+	if resp.StatusCode >= 500 {
+		return verifier.TestResult{
+			Name:        "Token Exchange",
+			Description: "OAuth2 token exchange with PKCE verification",
+			Status:      verifier.StatusFail,
+			Duration:    time.Since(startTime),
+			Error:       fmt.Sprintf("Token endpoint server error: %d", resp.StatusCode),
+			Details: map[string]interface{}{
+				"status_code": resp.StatusCode,
+				"pkce_sent":   true,
+			},
+		}
+	}
+
+	// We expect 4xx errors with invalid_grant since we're using a fake code
+	// But the server should properly handle the PKCE parameters (not return 5xx)
 	return verifier.TestResult{
 		Name:        "Token Exchange",
 		Description: "OAuth2 token exchange with PKCE verification",
@@ -268,6 +313,7 @@ func (v *AuthCodePKCEVerifier) testTokenExchange(config verifier.VerifierConfig,
 		Details: map[string]interface{}{
 			"status_code": resp.StatusCode,
 			"pkce_sent":   true,
+			"note":        "4xx errors expected for invalid authorization codes",
 		},
 	}
 }

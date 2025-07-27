@@ -9,6 +9,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"fapictl/pkg/colors"
 )
 
 // LogLevel represents the logging verbosity level
@@ -43,49 +45,49 @@ func (l *Logger) SetOutput(w io.Writer) {
 // Info logs informational messages (always shown unless quiet)
 func (l *Logger) Info(format string, args ...interface{}) {
 	if l.level >= LogLevelInfo {
-		l.printf("ℹ️  "+format, args...)
+		l.printf(colors.Info("INFO: ")+format, args...)
 	}
 }
 
 // Verbose logs detailed execution information
 func (l *Logger) Verbose(format string, args ...interface{}) {
 	if l.level >= LogLevelVerbose {
-		l.printf("🔍 "+format, args...)
+		l.printf(colors.Gray("VERBOSE: ")+format, args...)
 	}
 }
 
 // Debug logs debug information and HTTP traffic
 func (l *Logger) Debug(format string, args ...interface{}) {
 	if l.level >= LogLevelDebug {
-		l.printf("🐛 "+format, args...)
+		l.printf(colors.Magenta("DEBUG: ")+format, args...)
 	}
 }
 
 // Success logs success messages
 func (l *Logger) Success(format string, args ...interface{}) {
 	if l.level >= LogLevelInfo {
-		l.printf("✅ "+format, args...)
+		l.printf(colors.Success("SUCCESS: ")+format, args...)
 	}
 }
 
 // Warning logs warning messages
 func (l *Logger) Warning(format string, args ...interface{}) {
 	if l.level >= LogLevelInfo {
-		l.printf("⚠️  "+format, args...)
+		l.printf(colors.Warning("WARNING: ")+format, args...)
 	}
 }
 
 // Error logs error messages
 func (l *Logger) Error(format string, args ...interface{}) {
 	if l.level >= LogLevelInfo {
-		l.printf("❌ "+format, args...)
+		l.printf(colors.Error("ERROR: ")+format, args...)
 	}
 }
 
 // Step logs test step information
 func (l *Logger) Step(step int, total int, description string) {
 	if l.level >= LogLevelVerbose {
-		l.printf("📋 Step %d/%d: %s", step, total, description)
+		l.printf(colors.Gray("STEP %d/%d: ")+"%s", step, total, description)
 	}
 }
 
@@ -96,7 +98,7 @@ func (l *Logger) HTTP(req *http.Request, resp *http.Response, duration time.Dura
 	}
 
 	l.printf("\n" + strings.Repeat("=", 80))
-	l.printf("🌐 HTTP Request/Response (Duration: %v)", duration)
+	l.printf(colors.Cyan("HTTP Request/Response (Duration: %v)"), duration)
 	l.printf(strings.Repeat("=", 80))
 
 	// Log request
@@ -114,7 +116,7 @@ func (l *Logger) HTTP(req *http.Request, resp *http.Response, duration time.Dura
 
 // logHTTPRequest logs detailed HTTP request information
 func (l *Logger) logHTTPRequest(req *http.Request) {
-	l.printf("\n📤 REQUEST:")
+	l.printf("\n" + colors.Header("REQUEST:"))
 	l.printf("Method: %s", req.Method)
 	l.printf("URL: %s", req.URL.String())
 	l.printf("Proto: %s", req.Proto)
@@ -147,7 +149,7 @@ func (l *Logger) logHTTPRequest(req *http.Request) {
 
 // logHTTPResponse logs detailed HTTP response information
 func (l *Logger) logHTTPResponse(resp *http.Response) {
-	l.printf("\n📥 RESPONSE:")
+	l.printf("\n" + colors.Header("RESPONSE:"))
 	l.printf("Status: %s", resp.Status)
 	l.printf("Proto: %s", resp.Proto)
 
@@ -240,19 +242,19 @@ func (l *Logger) logFormData(formData string) {
 // Test logs test execution information
 func (l *Logger) Test(testName string, status string, duration time.Duration, details string) {
 	if l.level >= LogLevelVerbose {
-		var icon string
+		var coloredStatus string
 		switch strings.ToUpper(status) {
 		case "PASS":
-			icon = "✅"
+			coloredStatus = colors.Success("PASS")
 		case "FAIL":
-			icon = "❌"
+			coloredStatus = colors.Error("FAIL")
 		case "SKIP":
-			icon = "⏭️ "
+			coloredStatus = colors.Skip("SKIP")
 		default:
-			icon = "🔍"
+			coloredStatus = colors.Info(status)
 		}
 
-		l.printf("%s %s (%v)", icon, testName, duration)
+		l.printf("%s %s (%v)", coloredStatus, testName, duration)
 		if details != "" && l.level >= LogLevelDebug {
 			l.printf("   Details: %s", details)
 		}
@@ -262,7 +264,7 @@ func (l *Logger) Test(testName string, status string, duration time.Duration, de
 // PKCE logs PKCE generation details
 func (l *Logger) PKCE(verifier, challenge, method string) {
 	if l.level >= LogLevelDebug {
-		l.printf("\n🔐 PKCE Generation:")
+		l.printf("\n" + colors.Header("PKCE Generation:"))
 		l.printf("Method: %s", method)
 		l.printf("Verifier: %s", l.maskSensitiveValue(verifier))
 		l.printf("Challenge: %s", challenge)
@@ -272,7 +274,7 @@ func (l *Logger) PKCE(verifier, challenge, method string) {
 // JWT logs JWT token information
 func (l *Logger) JWT(tokenType, token string) {
 	if l.level >= LogLevelDebug {
-		l.printf("\n🎟️  JWT Token (%s):", tokenType)
+		l.printf("\n"+colors.Header("JWT Token (%s):"), tokenType)
 
 		// Split JWT into parts
 		parts := strings.Split(token, ".")
@@ -299,7 +301,7 @@ func (l *Logger) Certificate(certType, subject, issuer string, expires time.Time
 // Endpoint logs endpoint information
 func (l *Logger) Endpoint(name, url, method string) {
 	if l.level >= LogLevelVerbose {
-		l.printf("🌐 %s Endpoint: %s %s", name, method, url)
+		l.printf(colors.Cyan("%s Endpoint: ")+"%s %s", name, method, colors.URL(url))
 	}
 }
 

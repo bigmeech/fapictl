@@ -18,6 +18,7 @@ import (
 	"strings"
 	"time"
 
+	"fapictl/pkg/colors"
 	"fapictl/pkg/crypto"
 	"github.com/spf13/cobra"
 )
@@ -139,17 +140,17 @@ func runGeneratePKCE(cmd *cobra.Command, args []string) {
 	}
 
 	if genShowDetails {
-		fmt.Println("PKCE Challenge Generated Successfully")
-		fmt.Println("===================================")
-		fmt.Printf("Method: %s\n", challenge.Method)
-		fmt.Printf("Code Verifier Length: %d characters\n", len(challenge.Verifier))
-		fmt.Printf("Code Challenge Length: %d characters\n", len(challenge.Challenge))
+		fmt.Println(colors.Success("PKCE Challenge Generated Successfully"))
+		fmt.Println(colors.Header("==================================="))
+		fmt.Printf(colors.Key("Method: ")+"%s\n", challenge.Method)
+		fmt.Printf(colors.Key("Code Verifier Length: ")+"%d characters\n", len(challenge.Verifier))
+		fmt.Printf(colors.Key("Code Challenge Length: ")+"%d characters\n", len(challenge.Challenge))
 		fmt.Println()
 	}
 
-	fmt.Printf("Code Verifier: %s\n", challenge.Verifier)
-	fmt.Printf("Code Challenge: %s\n", challenge.Challenge)
-	fmt.Printf("Challenge Method: %s\n", challenge.Method)
+	fmt.Printf(colors.Key("Code Verifier: ")+colors.Value("%s")+"\n", challenge.Verifier)
+	fmt.Printf(colors.Key("Code Challenge: ")+colors.Value("%s")+"\n", challenge.Challenge)
+	fmt.Printf(colors.Key("Challenge Method: ")+colors.Value("%s")+"\n", challenge.Method)
 
 	// Save to files if requested
 	if genKeyID != "" {
@@ -157,18 +158,18 @@ func runGeneratePKCE(cmd *cobra.Command, args []string) {
 		challengeFile := fmt.Sprintf("%s/%s_challenge.txt", genOutputDir, genKeyID)
 
 		if err := saveToFile(verifierFile, challenge.Verifier, genOverwrite); err != nil {
-			fmt.Fprintf(os.Stderr, "Error saving verifier: %v\n", err)
+			fmt.Fprintf(os.Stderr, colors.Error("Error saving verifier: ")+"%v\n", err)
 			os.Exit(1)
 		}
 
 		if err := saveToFile(challengeFile, challenge.Challenge, genOverwrite); err != nil {
-			fmt.Fprintf(os.Stderr, "Error saving challenge: %v\n", err)
+			fmt.Fprintf(os.Stderr, colors.Error("Error saving challenge: ")+"%v\n", err)
 			os.Exit(1)
 		}
 
-		fmt.Printf("\nSaved to files:\n")
-		fmt.Printf("  Verifier: %s\n", verifierFile)
-		fmt.Printf("  Challenge: %s\n", challengeFile)
+		fmt.Printf("\n" + colors.Success("Saved to files:") + "\n")
+		fmt.Printf("  "+colors.Key("Verifier: ")+colors.Path("%s")+"\n", verifierFile)
+		fmt.Printf("  "+colors.Key("Challenge: ")+colors.Path("%s")+"\n", challengeFile)
 	}
 }
 
@@ -185,10 +186,10 @@ func runGenerateKey(cmd *cobra.Command, args []string) {
 	case "rsa":
 		privateKey, err = rsa.GenerateKey(rand.Reader, genKeySize)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error generating RSA key: %v\n", err)
+			fmt.Fprintf(os.Stderr, colors.Error("Error generating RSA key: ")+"%v\n", err)
 			os.Exit(1)
 		}
-		fmt.Printf("Generated RSA private key (%d bits)\n", genKeySize)
+		fmt.Printf(colors.Success("Generated RSA private key ")+"(%d bits)\n", genKeySize)
 
 	case "ecdsa":
 		var c elliptic.Curve
@@ -200,19 +201,19 @@ func runGenerateKey(cmd *cobra.Command, args []string) {
 		case "P-521":
 			c = elliptic.P521()
 		default:
-			fmt.Fprintf(os.Stderr, "Unsupported curve: %s\n", genCurve)
+			fmt.Fprintf(os.Stderr, colors.Error("Unsupported curve: ")+"%s\n", genCurve)
 			os.Exit(1)
 		}
 
 		privateKey, err = ecdsa.GenerateKey(c, rand.Reader)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error generating ECDSA key: %v\n", err)
+			fmt.Fprintf(os.Stderr, colors.Error("Error generating ECDSA key: ")+"%v\n", err)
 			os.Exit(1)
 		}
-		fmt.Printf("Generated ECDSA private key (%s curve)\n", genCurve)
+		fmt.Printf(colors.Success("Generated ECDSA private key ")+"(%s curve)\n", genCurve)
 
 	default:
-		fmt.Fprintf(os.Stderr, "Unsupported key type: %s\n", genKeyType)
+		fmt.Fprintf(os.Stderr, colors.Error("Unsupported key type: ")+"%s\n", genKeyType)
 		os.Exit(1)
 	}
 
@@ -264,9 +265,9 @@ func runGenerateKey(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	fmt.Printf("Key ID: %s\n", genKeyID)
-	fmt.Printf("Private key saved to: %s\n", privateKeyFile)
-	fmt.Printf("Public key saved to: %s\n", publicKeyFile)
+	fmt.Printf(colors.Key("Key ID: ")+colors.Value("%s")+"\n", genKeyID)
+	fmt.Printf(colors.Key("Private key saved to: ")+colors.Path("%s")+"\n", privateKeyFile)
+	fmt.Printf(colors.Key("Public key saved to: ")+colors.Path("%s")+"\n", publicKeyFile)
 	fmt.Printf("\nConfiguration usage:\n")
 	fmt.Printf("private_key_jwt:\n")
 	fmt.Printf("  kid: \"%s\"\n", genKeyID)
@@ -309,7 +310,7 @@ func runGenerateCert(cmd *cobra.Command, args []string) {
 			os.Exit(1)
 		}
 	default:
-		fmt.Fprintf(os.Stderr, "Unsupported key type: %s\n", genKeyType)
+		fmt.Fprintf(os.Stderr, colors.Error("Unsupported key type: ")+"%s\n", genKeyType)
 		os.Exit(1)
 	}
 
@@ -445,7 +446,7 @@ func runGenerateJWK(cmd *cobra.Command, args []string) {
 		fmt.Printf("Generated ECDSA JWK (%s curve)\n", genCurve)
 
 	default:
-		fmt.Fprintf(os.Stderr, "Unsupported key type: %s\n", genKeyType)
+		fmt.Fprintf(os.Stderr, colors.Error("Unsupported key type: ")+"%s\n", genKeyType)
 		os.Exit(1)
 	}
 
@@ -477,7 +478,7 @@ func runGenerateJWK(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	fmt.Printf("Key ID: %s\n", genKeyID)
+	fmt.Printf(colors.Key("Key ID: ")+colors.Value("%s")+"\n", genKeyID)
 	fmt.Printf("Private JWK saved to: %s\n", privateJWKFile)
 	fmt.Printf("Public JWK saved to: %s\n", publicJWKFile)
 	fmt.Printf("\nConfiguration usage:\n")
